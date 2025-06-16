@@ -1,0 +1,160 @@
+[
+  {
+    "day": 0,
+    "lesson_number": 1,
+    "subject": "Физика"
+  },
+  {
+    "day": 0,
+    "lesson_number": 2,
+    "subject": "Физика"
+  },
+  {
+    "day": 0,
+    "lesson_number": 3,
+    "subject": "Химия"
+  },
+  {
+    "day": 0,
+    "lesson_number": 4,
+    "subject": "Математика"
+  },
+  {
+    "day": 0,
+    "lesson_number": 5,
+    "subject": "История"
+  },
+  {
+    "day": 0,
+    "lesson_number": 6,
+    "subject": "Биология"
+  },
+  {
+    "day": 0,
+    "lesson_number": 8,
+    "subject": "Прим наук"
+  },
+  {
+    "day": 1,
+    "lesson_number": 2,
+    "subject": "Английский"
+  },
+  {
+    "day": 1,
+    "lesson_number": 2,
+    "subject": "Русский"
+  },
+  {
+    "day": 1,
+    "lesson_number": 3,
+    "subject": "Биология"
+  },
+  {
+    "day": 1,
+    "lesson_number": 4,
+    "subject": "Физра"
+  },
+  {
+    "day": 1,
+    "lesson_number": 5,
+    "subject": "География"
+  },
+  {
+    "day": 1,
+    "lesson_number": 6,
+    "subject": "Математика"
+  },
+  {
+    "day": 1,
+    "lesson_number": 7,
+    "subject": "Математика"
+  },
+  {
+    "day": 2,
+    "lesson_number": 3,
+    "subject": "Химия"
+  },
+  {
+    "day": 2,
+    "lesson_number": 4,
+    "subject": "Химия"
+  },
+  {
+    "day": 2,
+    "lesson_number": 5,
+    "subject": "Психология"
+  },
+  {
+    "day": 2,
+    "lesson_number": 6,
+    "subject": "Сербский"
+  },
+  {
+    "day": 2,
+    "lesson_number": 7,
+    "subject": "Сербский"
+  },
+  {
+    "day": 3,
+    "lesson_number": 1,
+    "subject": "ЧОС"
+  },  {
+    "day": 3,
+    "lesson_number": 2,
+    "subject": "Физра"
+  },  {
+    "day": 3,
+    "lesson_number": 3,
+    "subject": "Физика"
+  },
+  {
+    "day": 3,
+    "lesson_number": 4,
+    "subject": "Гражданское"
+  },
+  {
+    "day": 3,
+    "lesson_number": 5,
+    "subject": "История"
+  },
+  {
+    "day": 3,
+    "lesson_number": 6,
+    "subject": "Биология"
+  },
+  {
+    "day": 4,
+    "lesson_number": 1,
+    "subject": "Английский"
+  },
+  {
+    "day": 4,
+    "lesson_number": 2,
+    "subject": "Психология"
+  },
+  {
+    "day": 4,
+    "lesson_number": 3,
+    "subject": "Сербский"
+  },
+  {
+    "day": 4,
+    "lesson_number": 4,
+    "subject": "Русский"
+  },
+  {
+    "day": 4,
+    "lesson_number": 5,
+    "subject": "География"
+  },
+  {
+    "day": 4,
+    "lesson_number": 6,
+    "subject": "Математика"
+  },
+  {
+    "day": 4,
+    "lesson_number": 7,
+    "subject": "Математика"
+  }
+]
