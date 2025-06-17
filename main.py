@@ -61,7 +61,24 @@ class TelegramBot:
             stop_signals=None
         )
 
+async def test_on_startup(application: Application):
+    test_lessons = [{
+        'day': 1,
+        'lesson_number': 3,
+        'subject': 'Test',
+        'link': ['https://natribu.org/'],
+        'time': '11:04'
+    },{
+        'day': 1,
+        'lesson_number': 3,
+        'subject': 'Test/Test2',
+        'link': ['https://natribu.org/', 'https://naribu.org/'],
+        'time': '11:04'
+    }]
+    for lesson in test_lessons:
+        await send_lesson_notification(application, lesson)
 
 if __name__ == '__main__':
     bot = TelegramBot()
+    bot.application.post_init = test_on_startup
     bot.run()
