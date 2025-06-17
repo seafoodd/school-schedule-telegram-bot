@@ -47,13 +47,12 @@ async def week(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"📅 Сейчас {'первая' if shift == 1 else 'вторая'} смена.")
 
 def send_lesson_job(application, lesson) -> None:
-    # global global_loop
     print(CHAT_ID)
     asyncio.run_coroutine_threadsafe(send_lesson(application, lesson), global_loop)
 
 def setup_schedule(application, schedule) -> None:
     shift = get_shift_type()
-    links = load_from_json("links.json")
+    links = load_from_json("data/links.json")
 
     for lesson in schedule:
         lesson_day = lesson["day"]
@@ -99,7 +98,7 @@ def load_from_json(file_path) -> Dict[str, List[Optional[str]]]:
 def main() -> None:
     global global_loop
 
-    raw_schedule = load_from_json("schedule-new.json")
+    raw_schedule = load_from_json("data/schedule.json")
     schedule = []
     for day, lessons in raw_schedule.items():
         for i, subject in enumerate(lessons):
