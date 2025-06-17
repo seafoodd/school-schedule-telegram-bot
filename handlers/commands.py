@@ -11,7 +11,7 @@ async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         "⚡ <b>Доступные команды:</b>\n"
         "/start - Показать это приветственное сообщение\n"
         "/week - Проверить текущую неделю (1-я/2-я)\n"
-        "/schedule - Показать расписание\n"
+        "/schedule - Показать расписание (в лс)\n"
         "/chat_id - Показать ID чата\n"
         "/help - Показать список команд\n\n"
     )
@@ -23,15 +23,15 @@ async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def schedule_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    keyboard = [
-        [InlineKeyboardButton("Сегодня", callback_data="schedule_today"),
-         InlineKeyboardButton("Неделя", callback_data="schedule_week")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    today = datetime.now().weekday()
+    shift = ScheduleService().get_shift_type()
+    today_lessons = [lesson for lesson in settings.schedule if lesson["day"] == today]
 
     await update.message.reply_text(
-        "📅 Выберите расписание:",
-        reply_markup=reply_markup
+        text=_format_daily_schedule(today_lessons, shift, today),
+        reply_markup=_create_schedule_keyboard("week"),
+        parse_mode="HTML",
+        disable_web_page_preview=True
     )
 
 
@@ -39,28 +39,46 @@ async def schedule_callback(update: Update, _: ContextTypes.DEFAULT_TYPE) -> Non
     query = update.callback_query
     await query.answer()
 
+    shift = ScheduleService().get_shift_type()
     today = datetime.now().weekday()
-    schedule_service = ScheduleService()
-    shift = schedule_service.get_shift_type()
 
     if "today" in query.data:
-        today_lessons = [l for l in settings.schedule if l["day"] == today]
-        message = format_daily_schedule(today_lessons, shift, today)
+        today_lessons = [lesson for lesson in settings.schedule if lesson["day"] == today]
+        message = _format_daily_schedule(today_lessons, shift, today)
+        button = ("Расписание на сегодня", "schedule_week")
     else:
-        message = format_weekly_schedule(shift)
+        message = _format_weekly_schedule(shift)
+        button = ("Расписание на неделю", "schedule_today")
 
     await query.edit_message_text(
         text=message,
-        parse_mode="HTML"
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+        reply_markup=_create_schedule_keyboard(button[1])
     )
 
 
-def format_daily_schedule(lessons: List[Lesson], shift: int, day: int) -> str:
+def _create_schedule_keyboard(button_type: str) -> InlineKeyboardMarkup:
+    button_text, callback_data = (
+        ("Расписание на неделю", "schedule_week") if button_type == "schedule_week"
+        else ("Расписание на сегодня", "schedule_today")
+    )
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(button_text, callback_data=callback_data)]
+    ])
+
+
+def _format_daily_schedule(lessons: List[Lesson], shift: int, day: int) -> str:
     day_names = ["понедельник", "вторник", "среду", "четверг", "пятницу", "субботу", "воскресенье"]
     message = [f"<b>📅 Расписание на {day_names[day]} ({shift} смена)</b>\n"]
 
-    for lesson in sorted(lessons, key=lambda x: x["lesson_number"]):
-        time_index = (lesson["lesson_number"] - 1) if shift == 1 else (13 - lesson["lesson_number"])
+    lessons = sorted(lessons, key=lambda x: x["lesson_number"])
+
+    if shift == 2:
+        lessons.reverse()
+
+    for lesson in lessons:
+        time_index = (lesson["lesson_number"] - 1) if shift == 1 else (14 - lesson["lesson_number"])
         if time_index < len(settings.LESSON_START_TIMES):
             start_time = settings.LESSON_START_TIMES[time_index]
             hour, minute = map(int, start_time.split(':'))
@@ -78,17 +96,27 @@ def format_daily_schedule(lessons: List[Lesson], shift: int, day: int) -> str:
             status_icon = "🟡" if is_upcoming else "🔴" if is_ongoing else "🟢"
             strikethrough = "<s>" if is_finished else ""
             time_display = f"{start_time}-{end_time}"
-            link = f' (<a href="{settings.links[lesson['subject']]}">идёт сейчас</a>)' if is_ongoing else ""
 
-            message.append(
-                f"{status_icon} {strikethrough}{time_display}: <b>{lesson['subject']}</b>{'</s>' if is_finished else ''}"
-                f"{link if is_ongoing else ''}"
-            )
+            # there are some lessons that are like this: Русский/Английский, so it's just handling this case
+            subjects = lesson['subject'].split('/')
+            if len(subjects) > 1:
+                links = [
+                    f'<a href="{settings.links[subj]}">{subj}</a>'
+                    for subj in subjects
+                ]
+                message.append(
+                    f"{status_icon} {strikethrough}{time_display}: <b>{'</b>/<b>'.join(links)}</b>{'</s>' if is_finished else ''}"
+                )
+            else:
+                subj = subjects[0]
+                link = f'<a href="{settings.links[subj]}">{subj}</a>'
+                message.append(
+                    f"{status_icon} {strikethrough}{time_display}: <b>{link}</b>{'</s>' if is_finished else ''}"
+                )
 
     return "\n".join(message) if len(message) > 1 else "Сегодня нет уроков"
 
-
-def format_weekly_schedule(shift: int) -> str:
+def _format_weekly_schedule(shift: int) -> str:
     day_names = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     message = [f"<b>📅 Расписание на неделю ({shift} смена)</b>"]
 
@@ -98,15 +126,21 @@ def format_weekly_schedule(shift: int) -> str:
 
     for day in range(7):
         day_lessons = sorted(by_day[day], key=lambda x: x["lesson_number"])
+
+        if shift == 2:
+            day_lessons.reverse()
+
         if not day_lessons:
             continue
 
         day_msg = [f"\n<b>{day_names[day]}:</b>"]
         for lesson in day_lessons:
-            time_index = (lesson["lesson_number"] - 1) if shift == 1 else (13 - lesson["lesson_number"])
+            time_index = (lesson["lesson_number"] - 1) if shift == 1 else (14 - lesson["lesson_number"])
             if time_index < len(settings.LESSON_START_TIMES):
                 start_time = settings.LESSON_START_TIMES[time_index]
-                day_msg.append(f"  {start_time}: {lesson['subject']}")
+                hour, minute = map(int, start_time.split(':'))
+                end_time = f"{(hour + (minute + 45) // 60):02d}:{(minute + 45) % 60:02d}"
+                day_msg.append(f"  {start_time}-{end_time}: {lesson['subject']}")
 
         message.append("\n".join(day_msg))
 
@@ -133,7 +167,7 @@ async def help_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         "📌 <u>Основные команды</u>:\n"
         "/start - Показать приветственное сообщение\n"
         "/week - Проверить текущую неделю (1-я/2-я)\n"
-        "/schedule - Показать расписание\n"
+        "/schedule - Показать расписание (в лс)\n"
         "/chat_id - Показать ID чата\n"
         "/help - Показать список команд\n\n"
         "🔧 <u>Решение проблем</u>:\n"

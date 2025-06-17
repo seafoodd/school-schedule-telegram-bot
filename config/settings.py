@@ -1,4 +1,5 @@
 import os
+from datetime import date
 from pathlib import Path
 from dotenv import load_dotenv
 from typing import Dict, List
@@ -19,7 +20,7 @@ class Settings:
         self._schedule = None
 
         self.LESSON_START_TIMES = [
-            "07:30", "08:20", "09:10", "10:10", "11:00", "11:50", "12:40", "13:55",
+            "07:30", "08:20", "9:10", "10:10", "11:00", "11:50", "12:40", "13:55",
             "14:45", "15:35", "16:35", "17:25", "18:15", "19:05",
         ]
 
@@ -45,8 +46,8 @@ class Settings:
         except (FileNotFoundError, json.JSONDecodeError) as e:
             raise RuntimeError(f"Failed to load {path}: {str(e)}")
 
-    @staticmethod
-    def _process_schedule(raw_schedule: Dict) -> List[Dict]:
+
+    def _process_schedule(self, raw_schedule: Dict) -> List[Dict]:
         processed = []
         for day, lessons in raw_schedule.items():
             for i, subject in enumerate(lessons):
@@ -56,6 +57,23 @@ class Settings:
                         "lesson_number": i + 1,
                         "subject": subject
                     })
+
+        base_date = date(*self.BASE_DATE)
+        weeks_passed = (date.today() - base_date).days // 7
+        weekday_to_copy = weeks_passed % 5
+
+        saturday_lessons = [
+            {
+                "day": 5,
+                "lesson_number": lesson["lesson_number"],
+                "subject": lesson["subject"]
+            }
+            for lesson in processed
+            if lesson["day"] == weekday_to_copy
+        ]
+
+        processed += saturday_lessons
+
         return processed
 
     def reload_data(self):
