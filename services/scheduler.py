@@ -29,24 +29,20 @@ class ScheduleService:
         return 1 if weeks_passed % 2 == 0 else 2
 
     def setup_lessons(self, application, lessons: List[Lesson], send_lesson_callback):
-        shift = self.get_shift_type()
         links = load_links()
 
         for lesson in lessons:
-            self._schedule_lesson(lesson, shift, links, application, send_lesson_callback)
+            self._schedule_lesson(lesson, links, application, send_lesson_callback)
 
-    def _schedule_lesson(self, lesson: Lesson, shift: ShiftType, links: Dict[str, str],
+    def _schedule_lesson(self, lesson: Lesson, links: Dict[str, str],
                          application, callback):
         lesson_number = lesson["lesson_number"]
 
-        if shift == 1:
-            time_index = lesson_number - 1
-            time_index_offset = 13 - (lesson_number - 1)
-        else:
-            time_index = 13 - (lesson_number - 1)
-            time_index_offset = lesson_number - 1
+        first_shift_index = lesson_number - 1
+        second_shift_index = 13 - (lesson_number - 1)
 
-        if time_index >= len(settings.LESSON_START_TIMES):
+        if first_shift_index >= len(settings.LESSON_START_TIMES) or \
+                second_shift_index >= len(settings.LESSON_START_TIMES):
             logging.warning(f"Lesson number {lesson_number} exceeds available start times")
             return
 
@@ -54,7 +50,7 @@ class ScheduleService:
 
         lesson1 = deepcopy(lesson)
         lesson1["link"] = links[lesson["subject"]]
-        lesson1["time"] = settings.LESSON_START_TIMES[time_index]
+        lesson1["time"] = settings.LESSON_START_TIMES[first_shift_index]
         hour, minute = map(int, lesson1["time"].split(":"))
 
         self.scheduler.add_job(
@@ -65,15 +61,13 @@ class ScheduleService:
             minute=minute,
             args=[application, lesson1],
             timezone=settings.TIMEZONE,
-            week='*/2',
+            week='1-53/2',  # Odd weeks
             start_date=base_dt
         )
 
-        logging.info(f"Scheduled: Day {lesson1['day'] + 1}, {lesson1['time']}, {lesson1['subject']}")
-
         lesson2 = deepcopy(lesson)
         lesson2["link"] = links[lesson["subject"]]
-        lesson2["time"] = settings.LESSON_START_TIMES[time_index_offset]
+        lesson2["time"] = settings.LESSON_START_TIMES[second_shift_index]
         hour, minute = map(int, lesson2["time"].split(":"))
 
         self.scheduler.add_job(
@@ -84,8 +78,10 @@ class ScheduleService:
             minute=minute,
             args=[application, lesson2],
             timezone=settings.TIMEZONE,
-            week='*/2',
+            week='2-52/2',  # Even weeks
             start_date=base_dt + timedelta(weeks=1)
         )
 
-        logging.info(f"Scheduled: Day {lesson2['day'] + 1}, {lesson2['time']}, {lesson2['subject']}")
+        logging.info(f"Scheduled both shifts for {lesson['subject']}: "
+                     f"1st shift at {lesson1['time']} (odd weeks), "
+                     f"2nd shift at {lesson2['time']} (even weeks)")
