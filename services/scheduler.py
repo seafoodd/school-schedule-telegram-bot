@@ -48,7 +48,7 @@ class ScheduleService:
         base_dt = datetime(*settings.BASE_DATE)
 
         lesson1 = deepcopy(lesson)
-        lesson1["link"] = settings.links[lesson["subject"]] if "/" not in lesson["subject"] else None
+        lesson1["link"] = [settings.links[subj] for subj in lesson['subject'].split("/")]
         lesson1["time"] = settings.LESSON_START_TIMES[first_shift_index]
         hour, minute = map(int, lesson1["time"].split(":"))
 
@@ -65,7 +65,7 @@ class ScheduleService:
         )
 
         lesson2 = deepcopy(lesson)
-        lesson2["link"] = settings.links[lesson["subject"]] if "/" not in lesson["subject"] else None
+        lesson2["link"] = [settings.links[subj] for subj in lesson['subject'].split("/")]
         lesson2["time"] = settings.LESSON_START_TIMES[second_shift_index]
         hour, minute = map(int, lesson2["time"].split(":"))
 

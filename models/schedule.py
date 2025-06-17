@@ -6,7 +6,7 @@ class Lesson(TypedDict):
     lesson_number: int
     subject: str
     time: Optional[str]
-    link: Optional[str]
+    link: list[str]
 
 
 ShiftType = Literal[1, 2]

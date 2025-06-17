@@ -9,16 +9,13 @@ from models.schedule import Lesson
 async def send_lesson_notification(application: Application, lesson: Lesson) -> None:
     try:
         subjects = lesson['subject'].split('/')
-        if len(subjects) > 1:
-            links = [
-                f'<a href="{settings.links[subj]}">{subj}</a>'
-                for subj in subjects
-            ]
-            text = f"⏰ <b>{links[0]}/{links[1]}</b> начинаются в <b>{lesson['time']}</b>"
-        else:
-            subj = subjects[0]
-            link = f'<a href="{settings.links[subj]}">{subj}</a>'
-            text = f"⏰ {link} начинается в {lesson['time']}"
+        links = [
+            f'<a href="{lesson['link'][i]}">{subjects[i]}</a>'
+            for i in range(len(subjects))
+        ]
+        links = "/".join(links)
+
+        text = f"⏰ <b>{links}</b> начина{'ю' if len(subjects) > 1 else 'е'}тся в <b>{lesson['time']}</b>"
 
         await application.bot.send_message(
             chat_id=settings.CHAT_ID,
