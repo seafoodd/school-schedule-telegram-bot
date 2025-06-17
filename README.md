@@ -53,6 +53,7 @@ python main.py
 |------------|--------------------------|
 | `/start`   | Show the welcome message |
 | `/chat_id` | Show group chat id       |
+| `/schedule`| Show the schedule        |
 | `/week`    | Check current shift week |
 | `/help`    | Show command list        |
 

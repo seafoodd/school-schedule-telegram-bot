@@ -1,9 +1,7 @@
 from datetime import date
 from apscheduler.schedulers.background import BackgroundScheduler
-from typing import List, Dict
 from models.schedule import Lesson, ShiftType
 from config.settings import settings
-from services.schedule_loader import load_links
 import logging
 from datetime import datetime, timedelta
 from copy import deepcopy
@@ -28,13 +26,11 @@ class ScheduleService:
         weeks_passed = (today - base_date).days // 7
         return 1 if weeks_passed % 2 == 0 else 2
 
-    def setup_lessons(self, application, lessons: List[Lesson], send_lesson_callback):
-        links = load_links()
+    def setup_lessons(self, application, send_lesson_callback):
+        for lesson in settings.schedule:
+            self._schedule_lesson(lesson, application, send_lesson_callback)
 
-        for lesson in lessons:
-            self._schedule_lesson(lesson, links, application, send_lesson_callback)
-
-    def _schedule_lesson(self, lesson: Lesson, links: Dict[str, str],
+    def _schedule_lesson(self, lesson: Lesson,
                          application, callback):
         lesson_number = lesson["lesson_number"]
 
@@ -49,7 +45,7 @@ class ScheduleService:
         base_dt = datetime(*settings.BASE_DATE)
 
         lesson1 = deepcopy(lesson)
-        lesson1["link"] = links[lesson["subject"]]
+        lesson1["link"] = settings.links[lesson["subject"]]
         lesson1["time"] = settings.LESSON_START_TIMES[first_shift_index]
         hour, minute = map(int, lesson1["time"].split(":"))
 
@@ -66,7 +62,7 @@ class ScheduleService:
         )
 
         lesson2 = deepcopy(lesson)
-        lesson2["link"] = links[lesson["subject"]]
+        lesson2["link"] = settings.links[lesson["subject"]]
         lesson2["time"] = settings.LESSON_START_TIMES[second_shift_index]
         hour, minute = map(int, lesson2["time"].split(":"))
 

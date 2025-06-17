@@ -1,10 +1,9 @@
 import asyncio
 import logging
-from telegram.ext import Application, CommandHandler
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 from config.settings import settings
 from services.scheduler import ScheduleService
-from services.schedule_loader import load_schedule
-from handlers.commands import start, week, chat_id, help_command
+from handlers.commands import start, week, chat_id, help_command, schedule_command, schedule_callback
 from handlers.lessons import send_lesson_notification
 
 logging.basicConfig(
@@ -28,15 +27,15 @@ class TelegramBot:
 
     def setup_handlers(self):
         self.application.add_handler(CommandHandler("start", start))
+        self.application.add_handler(CommandHandler("schedule", schedule_command))
+        self.application.add_handler(CallbackQueryHandler(schedule_callback, pattern="^schedule_"))
         self.application.add_handler(CommandHandler("week", week))
         self.application.add_handler(CommandHandler("chat_id", chat_id))
         self.application.add_handler(CommandHandler("help", help_command))
 
     def setup_schedule(self):
-        schedule = load_schedule()
         self.schedule_service.setup_lessons(
             self.application,
-            schedule,
             self._send_lesson_wrapper
         )
 
