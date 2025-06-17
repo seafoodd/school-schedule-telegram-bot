@@ -80,5 +80,5 @@ async def test_on_startup(application: Application):
 
 if __name__ == '__main__':
     bot = TelegramBot()
-    bot.application.post_init = test_on_startup
+    # bot.application.post_init = test_on_startup
     bot.run()
