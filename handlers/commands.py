@@ -32,7 +32,7 @@ async def schedule_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None
 
     await update.message.reply_text(
         text=_format_daily_schedule(today_lessons, shift, today),
-        reply_markup=_create_schedule_keyboard("week"),
+        reply_markup=_create_schedule_keyboard("schedule_week"),
         parse_mode="HTML",
         disable_web_page_preview=True
     )
@@ -48,10 +48,10 @@ async def schedule_callback(update: Update, _: ContextTypes.DEFAULT_TYPE) -> Non
     if "today" in query.data:
         today_lessons = [lesson for lesson in settings.schedule if lesson["day"] == today]
         message = _format_daily_schedule(today_lessons, shift, today)
-        button = ("Расписание на сегодня", "schedule_week")
+        button = ("Расписание на неделю", "schedule_week")
     else:
         message = _format_weekly_schedule(shift)
-        button = ("Расписание на неделю", "schedule_today")
+        button = ("Расписание на сегодня", "schedule_today")
 
     await query.edit_message_text(
         text=message,
