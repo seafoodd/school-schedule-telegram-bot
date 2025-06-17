@@ -81,7 +81,7 @@ def _format_daily_schedule(lessons: List[Lesson], shift: int, day: int) -> str:
         lessons.reverse()
 
     for lesson in lessons:
-        time_index = (lesson["lesson_number"] - 1) if shift == 1 else (14 - lesson["lesson_number"])
+        time_index = (lesson["lesson_number"] - 1) if shift == 1 else (len(settings.LESSON_START_TIMES) - lesson["lesson_number"])
         if time_index < len(settings.LESSON_START_TIMES):
             start_time = settings.LESSON_START_TIMES[time_index]
             hour, minute = map(int, start_time.split(':'))
@@ -139,7 +139,7 @@ def _format_weekly_schedule(shift: int) -> str:
 
         day_msg = [f"\n<b>{day_names[day]}:</b>"]
         for lesson in day_lessons:
-            time_index = (lesson["lesson_number"] - 1) if shift == 1 else (14 - lesson["lesson_number"])
+            time_index = (lesson["lesson_number"] - 1) if shift == 1 else (len(settings.LESSON_START_TIMES) - lesson["lesson_number"])
             if time_index < len(settings.LESSON_START_TIMES):
                 start_time = settings.LESSON_START_TIMES[time_index]
                 hour, minute = map(int, start_time.split(':'))
