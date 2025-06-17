@@ -3,7 +3,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 from typing import Dict, List
 import json
-from datetime import date
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
@@ -26,14 +25,12 @@ class Settings:
 
     @property
     def links(self) -> Dict[str, str]:
-        """Lazy-loaded lesson links"""
         if self._links is None:
             self._links = self._load_json("data/links.json")
         return self._links
 
     @property
     def schedule(self) -> List[Dict]:
-        """Lazy-loaded schedule"""
         if self._schedule is None:
             raw = self._load_json("data/schedule.json")
             self._schedule = self._process_schedule(raw)
@@ -41,7 +38,6 @@ class Settings:
 
     @staticmethod
     def _load_json(path: str) -> Dict:
-        """Safe JSON loading with error handling"""
         full_path = BASE_DIR / path
         try:
             with open(full_path, 'r', encoding='utf-8') as f:
@@ -51,7 +47,6 @@ class Settings:
 
     @staticmethod
     def _process_schedule(raw_schedule: Dict) -> List[Dict]:
-        """Convert schedule JSON to internal format"""
         processed = []
         for day, lessons in raw_schedule.items():
             for i, subject in enumerate(lessons):
@@ -64,7 +59,6 @@ class Settings:
         return processed
 
     def reload_data(self):
-        """Force reload of data files"""
         self._links = None
         self._schedule = None
 
