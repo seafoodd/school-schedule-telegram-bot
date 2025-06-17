@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-A automated bot that sends lesson notifications and shift schedules to students via Telegram.
+An automated bot that sends lesson notifications and shift schedules to students via Telegram.
 
 ## ✨ Features
 
