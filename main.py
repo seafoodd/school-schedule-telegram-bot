@@ -4,7 +4,7 @@ from telegram.ext import Application, CommandHandler
 from config.settings import settings
 from services.scheduler import ScheduleService
 from services.schedule_loader import load_schedule
-from handlers.commands import start, week
+from handlers.commands import start, week, chat_id, help_command
 from handlers.lessons import send_lesson_notification
 
 logging.basicConfig(
@@ -29,6 +29,8 @@ class TelegramBot:
     def setup_handlers(self):
         self.application.add_handler(CommandHandler("start", start))
         self.application.add_handler(CommandHandler("week", week))
+        self.application.add_handler(CommandHandler("chat_id", chat_id))
+        self.application.add_handler(CommandHandler("help", help_command))
 
     def setup_schedule(self):
         schedule = load_schedule()

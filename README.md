@@ -21,8 +21,12 @@ An automated bot that sends lesson notifications and shift schedules to students
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/school-schedule-telegram-bot.git
+git clone https://github.com/seafoodd/school-schedule-telegram-bot.git
 cd school-schedule-telegram-bot
+
+# Set up a virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
 # Install dependencies
 pip install -r requirements.txt
@@ -30,10 +34,13 @@ pip install -r requirements.txt
 
 ### Configuration
 1. Copy `.env.example` to `.env`
+```bash
+cp .env.example .env  # On Windows: copy .env.example .env
+```
 2. Add your credentials:
 ```ini
-TOKEN=your_telegram_bot_token
-CHAT_ID=your_group_chat_id
+TOKEN=YOUR-TOKEN            # From @BotFather
+CHAT_ID=YOUR-GROUP-CHAT-ID  # Numeric chat ID
 ```
 
 ### Running the Bot
@@ -42,10 +49,12 @@ python main.py
 ```
 
 ## 🤖 Available Commands
-| Command | Description |
-|---------|-------------|
-| `/start` | Verify bot connection |
-| `/week`  | Check current shift week |
+| Command    | Description              |
+|------------|--------------------------|
+| `/start`   | Show the welcome message |
+| `/chat_id` | Show group chat id       |
+| `/week`    | Check current shift week |
+| `/help`    | Show command list        |
 
 ## 📈 Advanced Setup
 ### Customizing Schedules and Links
