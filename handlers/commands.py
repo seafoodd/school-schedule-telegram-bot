@@ -1,10 +1,13 @@
+from datetime import datetime
+from typing import List
+
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
+
 from config.settings import settings
 from models.schedule import Lesson
 from services.scheduler import ScheduleService
-from typing import List
-from datetime import datetime
+
 
 async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     welcome_msg = (
@@ -116,6 +119,7 @@ def _format_daily_schedule(lessons: List[Lesson], shift: int, day: int) -> str:
 
     return "\n".join(message) if len(message) > 1 else "Сегодня нет уроков"
 
+
 def _format_weekly_schedule(shift: int) -> str:
     day_names = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     message = [f"<b>📅 Расписание на неделю ({shift} смена)</b>"]
@@ -146,6 +150,7 @@ def _format_weekly_schedule(shift: int) -> str:
 
     return "\n".join(message) if len(message) > 1 else "No lessons scheduled this week"
 
+
 async def chat_id(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id_message = (
         "📝 <i>Chat ID:</i> <code>{chat_id}</code>"
@@ -156,10 +161,12 @@ async def chat_id(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         disable_web_page_preview=True
     )
 
+
 async def week(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     schedule_service = ScheduleService()
     shift = schedule_service.get_shift_type()
     await update.message.reply_text(f"📅 Сейчас {'первая' if shift == 1 else 'вторая'} смена.")
+
 
 async def help_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     help_text = (

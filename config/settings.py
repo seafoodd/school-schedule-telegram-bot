@@ -1,9 +1,10 @@
+import json
 import os
 from datetime import date
 from pathlib import Path
-from dotenv import load_dotenv
 from typing import Dict, List
-import json
+
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
@@ -45,7 +46,6 @@ class Settings:
                 return json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
             raise RuntimeError(f"Failed to load {path}: {str(e)}")
-
 
     def _process_schedule(self, raw_schedule: Dict) -> List[Dict]:
         processed = []

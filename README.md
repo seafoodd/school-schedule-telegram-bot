@@ -15,10 +15,12 @@ An automated bot that sends lesson notifications and shift schedules to students
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Python 3.10+
 - Telegram Bot Token ([get one from @BotFather](https://core.telegram.org/bots#6-botfather))
 
 ### Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/seafoodd/school-schedule-telegram-bot.git
@@ -33,42 +35,53 @@ pip install -r requirements.txt
 ```
 
 ### Configuration
+
 1. Copy `.env.example` to `.env`
+
 ```bash
 cp .env.example .env  # On Windows: copy .env.example .env
 ```
+
 2. Add your credentials:
+
 ```ini
-TOKEN=YOUR-TOKEN            # From @BotFather
-CHAT_ID=YOUR-GROUP-CHAT-ID  # Numeric chat ID
+TOKEN = YOUR-TOKEN            # From @BotFather
+CHAT_ID = YOUR-GROUP-CHAT-ID  # Numeric chat ID
 ```
 
 ### Running the Bot
+
 ```bash
 python main.py
 ```
 
 ## 🤖 Available Commands
-| Command    | Description              |
-|------------|--------------------------|
-| `/start`   | Show the welcome message |
-| `/chat_id` | Show group chat id       |
-| `/schedule`| Show the schedule        |
-| `/week`    | Check current shift week |
-| `/help`    | Show command list        |
+
+| Command     | Description              |
+|-------------|--------------------------|
+| `/start`    | Show the welcome message |
+| `/chat_id`  | Show group chat id       |
+| `/schedule` | Show the schedule        |
+| `/week`     | Check current shift week |
+| `/help`     | Show command list        |
 
 ## 📈 Advanced Setup
+
 ### Customizing Schedules and Links
+
 Edit the JSON files in `data/` following this format:
 
 ##### schedule.json:
+
 ```json
 {
   "1": ["Math", "Physics", null, "Chemistry"],
   "2": ["Literature", "Biology", "PE", null]
 }
 ```
+
 ##### links.json:
+
 ```json
 {
   "Psychology": "https://meet.google.com/xxx-xxxx-xxx",
@@ -78,4 +91,5 @@ Edit the JSON files in `data/` following this format:
 ```
 
 ## 📜 License
+
 MIT © @seafoodd - See [LICENSE](LICENSE) for details

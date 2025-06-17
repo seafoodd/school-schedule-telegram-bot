@@ -1,7 +1,10 @@
 import logging
+
 from telegram.ext import Application
-from models.schedule import Lesson
+
 from config.settings import settings
+from models.schedule import Lesson
+
 
 async def send_lesson_notification(application: Application, lesson: Lesson) -> None:
     try:

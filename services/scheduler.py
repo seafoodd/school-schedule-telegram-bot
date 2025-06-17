@@ -1,10 +1,13 @@
-from datetime import date
-from apscheduler.schedulers.background import BackgroundScheduler
-from models.schedule import Lesson, ShiftType
-from config.settings import settings
 import logging
-from datetime import datetime, timedelta
 from copy import deepcopy
+from datetime import date
+from datetime import datetime, timedelta
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from config.settings import settings
+from models.schedule import Lesson, ShiftType
+
 
 class ScheduleService:
     def __init__(self):

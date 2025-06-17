@@ -1,10 +1,12 @@
 import asyncio
 import logging
+
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler
+
 from config.settings import settings
-from services.scheduler import ScheduleService
 from handlers.commands import start, week, chat_id, help_command, schedule_command, schedule_callback
 from handlers.lessons import send_lesson_notification
+from services.scheduler import ScheduleService
 
 logging.basicConfig(
     level=logging.INFO,
