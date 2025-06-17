@@ -5,6 +5,8 @@ from models.schedule import Lesson, ShiftType
 from config.settings import settings
 from services.schedule_loader import load_links
 import logging
+from datetime import datetime, timedelta
+from copy import deepcopy
 
 class ScheduleService:
     def __init__(self):
@@ -39,17 +41,21 @@ class ScheduleService:
 
         if shift == 1:
             time_index = lesson_number - 1
+            time_index_offset = 13 - (lesson_number - 1)
         else:
             time_index = 13 - (lesson_number - 1)
+            time_index_offset = lesson_number - 1
 
         if time_index >= len(settings.LESSON_START_TIMES):
             logging.warning(f"Lesson number {lesson_number} exceeds available start times")
             return
 
-        lesson_time = settings.LESSON_START_TIMES[time_index]
-        hour, minute = map(int, lesson_time.split(":"))
-        lesson["link"] = links[lesson["subject"]]
-        lesson["time"] = lesson_time
+        base_dt = datetime(*settings.BASE_DATE)
+
+        lesson1 = deepcopy(lesson)
+        lesson1["link"] = links[lesson["subject"]]
+        lesson1["time"] = settings.LESSON_START_TIMES[time_index]
+        hour, minute = map(int, lesson1["time"].split(":"))
 
         self.scheduler.add_job(
             callback,
@@ -57,8 +63,29 @@ class ScheduleService:
             day_of_week=lesson["day"],
             hour=hour,
             minute=minute,
-            args=[application, lesson],
-            timezone=settings.TIMEZONE
+            args=[application, lesson1],
+            timezone=settings.TIMEZONE,
+            week='*/2',
+            start_date=base_dt
         )
 
-        logging.info(f"Scheduled: Day {lesson['day'] + 1}, {lesson_time}, {lesson['subject']}")
+        logging.info(f"Scheduled: Day {lesson1['day'] + 1}, {lesson1['time']}, {lesson1['subject']}")
+
+        lesson2 = deepcopy(lesson)
+        lesson2["link"] = links[lesson["subject"]]
+        lesson2["time"] = settings.LESSON_START_TIMES[time_index_offset]
+        hour, minute = map(int, lesson2["time"].split(":"))
+
+        self.scheduler.add_job(
+            callback,
+            trigger='cron',
+            day_of_week=lesson["day"],
+            hour=hour,
+            minute=minute,
+            args=[application, lesson2],
+            timezone=settings.TIMEZONE,
+            week='*/2',
+            start_date=base_dt + timedelta(weeks=1)
+        )
+
+        logging.info(f"Scheduled: Day {lesson2['day'] + 1}, {lesson2['time']}, {lesson2['subject']}")
