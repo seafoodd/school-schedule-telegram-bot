@@ -61,7 +61,8 @@ class ScheduleService:
             args=[application, lesson1],
             timezone=settings.TIMEZONE,
             week='1-53/2',  # Odd weeks
-            start_date=base_dt
+            start_date=base_dt,
+            misfire_grace_time=300
         )
 
         lesson2 = deepcopy(lesson)
@@ -78,7 +79,8 @@ class ScheduleService:
             args=[application, lesson2],
             timezone=settings.TIMEZONE,
             week='2-52/2',  # Even weeks
-            start_date=base_dt + timedelta(weeks=1)
+            start_date=base_dt + timedelta(weeks=1),
+            misfire_grace_time=300
         )
 
         logging.info(f"Scheduled both shifts for {lesson['subject']}: "
