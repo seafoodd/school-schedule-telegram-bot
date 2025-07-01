@@ -10,7 +10,7 @@ async def send_lesson_notification(application: Application, lesson: Lesson) -> 
     try:
         subjects = lesson['subject'].split('/')
         links = [
-            f'<a href="{lesson['link'][i]}">{subjects[i]}</a>'
+            f'<a href="{lesson["link"][i]}">{subjects[i]}</a>'
             for i in range(len(subjects))
         ]
         links = "/".join(links)
